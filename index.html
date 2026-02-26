@@ -687,24 +687,15 @@
 
   <script>
     // ─────────────────────────────────────────────────────────────────────────
-    // CONFIGURATION — update these 3 values before uploading to GitHub
+    // CONFIGURATION — update these 2 values before uploading to GitHub
     //
-    // GITHUB_TOKEN here is a fine-grained PAT scoped ONLY to frontrowmd-agents.
-    // It can only trigger the relay workflow in this one public repo.
-    // The relay workflow uses its own secret to call the actual agent repos.
-    // Safe to leave in a public repo — zero access to data or other repos.
+    // No GitHub token lives here. The Cloudflare Worker holds the token
+    // as an encrypted secret and calls GitHub on behalf of the browser.
+    // This file is safe to commit to a public repo.
     // ─────────────────────────────────────────────────────────────────────────
     const CONFIG = {
-      TEAM_PASSWORD: 'frontrow2025',          // Shared password your team enters
-      GITHUB_TOKEN:  'ghp_XXXXXXXXXXXX',      // Fine-grained PAT: frontrowmd-agents only
-      GITHUB_OWNER:  'YOUR_GITHUB_USERNAME',  // Your GitHub username
-    };
-
-    // The relay workflow lives in frontrowmd-agents and triggers the real agents.
-    // Real agent tokens stored as GitHub Actions secrets — never touch this file.
-    const RELAY = {
-      repo:     'frontrowmd-agents',
-      workflow: 'relay.yml',
+      TEAM_PASSWORD: 'frontrow2025',                          // Shared password your team enters
+      WORKER_URL:    'https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev', // Your Cloudflare Worker URL
     };
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -760,24 +751,20 @@
       btnIcon.outerHTML = '<span class="spinner"></span>';
       btnText.textContent = 'Triggering…';
       logEl.classList.remove('error-log');
-      showLog(logEl, '⏳ Sending request to GitHub Actions…');
+      showLog(logEl, '⏳ Sending request to Cloudflare Worker…');
 
       try {
-        const url = `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${RELAY.repo}/actions/workflows/${RELAY.workflow}/dispatches`;
-
-        const res = await fetch(url, {
+        // All GitHub credentials live in the Worker as encrypted secrets.
+        // This file sends only the agent ID — no token, no owner, nothing sensitive.
+        const res = await fetch(CONFIG.WORKER_URL, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${CONFIG.GITHUB_TOKEN}`,
-            'Accept': 'application/vnd.github+json',
-            'X-GitHub-Api-Version': '2022-11-28',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ref: 'main', inputs: { agent: agentId } }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ agent: agentId }),
         });
 
-        const ok = res.status === 204;
-        if (ok) {
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok) {
           // ── Success ──
           btn.classList.remove('running');
           btn.classList.add('success');
@@ -786,17 +773,15 @@
           showLog(logEl,
             `✅ Triggered successfully at ${now()}.\n` +
             `Results will arrive in Slack in ~60 seconds.\n` +
-            `Full run log: github.com/${CONFIG.GITHUB_OWNER}/${agentRepo}/actions`,
-            `<a href="https://github.com/${CONFIG.GITHUB_OWNER}/${agentRepo}/actions" target="_blank">View run log on GitHub →</a>`
+            `Full run log: github.com/${data.owner || 'your-org'}/${agentRepo}/actions`,
+            `<a href="https://github.com/${data.owner || 'your-org'}/${agentRepo}/actions" target="_blank">View run log on GitHub →</a>`
           );
           addActivity(agentName, 'success');
 
-          // Reset button after 12 seconds
           setTimeout(() => resetBtn(btn, btnText, agentId), 12000);
 
         } else {
-          const body = await res.text().catch(() => '');
-          throw new Error(`GitHub returned ${res.status}${body ? ': ' + body : ''}`);
+          throw new Error(data.error || `Worker returned ${res.status}`);
         }
 
       } catch (err) {
@@ -810,7 +795,7 @@
         showLog(logEl,
           `❌ Failed to trigger at ${now()}.\n` +
           `Error: ${err.message}\n\n` +
-          `Check that GITHUB_TOKEN is set correctly in index.html and relay.yml secrets are configured.`
+          `Check that WORKER_URL is set in CONFIG and the Worker is deployed with correct secrets.`
         );
         addActivity(agentName, 'error');
 
