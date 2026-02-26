@@ -688,17 +688,23 @@
   <script>
     // ─────────────────────────────────────────────────────────────────────────
     // CONFIGURATION — update these 3 values before uploading to GitHub
+    //
+    // GITHUB_TOKEN here is a fine-grained PAT scoped ONLY to frontrowmd-agents.
+    // It can only trigger the relay workflow in this one public repo.
+    // The relay workflow uses its own secret to call the actual agent repos.
+    // Safe to leave in a public repo — zero access to data or other repos.
     // ─────────────────────────────────────────────────────────────────────────
     const CONFIG = {
-      TEAM_PASSWORD: 'frontrow2026',          // Shared password your team enters
-      GITHUB_TOKEN:  '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',      // Your GitHub PAT (repo scope)
-      GITHUB_OWNER:  'frontrowmd',  // Your GitHub username
+      TEAM_PASSWORD: 'frontrow2025',          // Shared password your team enters
+      GITHUB_TOKEN:  'ghp_XXXXXXXXXXXX',      // Fine-grained PAT: frontrowmd-agents only
+      GITHUB_OWNER:  'YOUR_GITHUB_USERNAME',  // Your GitHub username
     };
 
-    // Workflow file names (must match the .yml filenames in each repo)
-    const WORKFLOWS = {
-      agent6: 'reporting-dashboard.yml',
-      agent4: 'linkedin-optimizer.yml',
+    // The relay workflow lives in frontrowmd-agents and triggers the real agents.
+    // Real agent tokens stored as GitHub Actions secrets — never touch this file.
+    const RELAY = {
+      repo:     'frontrowmd-agents',
+      workflow: 'relay.yml',
     };
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -757,7 +763,7 @@
       showLog(logEl, '⏳ Sending request to GitHub Actions…');
 
       try {
-        const url = `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${agentRepo}/actions/workflows/${WORKFLOWS[agentId]}/dispatches`;
+        const url = `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${RELAY.repo}/actions/workflows/${RELAY.workflow}/dispatches`;
 
         const res = await fetch(url, {
           method: 'POST',
@@ -767,7 +773,7 @@
             'X-GitHub-Api-Version': '2022-11-28',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ref: 'main' }),
+          body: JSON.stringify({ ref: 'main', inputs: { agent: agentId } }),
         });
 
         const ok = res.status === 204;
@@ -804,7 +810,7 @@
         showLog(logEl,
           `❌ Failed to trigger at ${now()}.\n` +
           `Error: ${err.message}\n\n` +
-          `Check that GITHUB_TOKEN and GITHUB_OWNER are set correctly in index.html.`
+          `Check that GITHUB_TOKEN is set correctly in index.html and relay.yml secrets are configured.`
         );
         addActivity(agentName, 'error');
 
