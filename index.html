@@ -737,6 +737,73 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   RESOURCES
+   ═══════════════════════════════════════════════════════════ */
+.resources-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 48px;
+}
+
+.resource-link {
+  background: var(--white);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--deep-navy);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  max-width: 480px;
+}
+.resource-link:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hov);
+  border-color: var(--soft-teal);
+}
+.resource-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.resource-text {
+  flex: 1;
+  min-width: 0;
+}
+.resource-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--deep-navy);
+  line-height: 1.3;
+}
+.resource-sub {
+  font-size: 12px;
+  color: var(--soft-teal);
+  margin-top: 2px;
+}
+.resource-arrow {
+  font-size: 16px;
+  color: var(--soft-teal);
+  opacity: 0.5;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.resource-link:hover .resource-arrow {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* ═══════════════════════════════════════════════════════════
    ACTIVITY LOG
    ═══════════════════════════════════════════════════════════ */
 .activity-card {
@@ -899,6 +966,19 @@ body {
     <div class="sl">Available Agents</div>
     <div class="agents-grid" id="agents-grid"></div>
 
+    <!-- Resources -->
+    <div class="sl">Resources</div>
+    <div class="resources-row">
+      <a class="resource-link" href="https://frontrowmd.github.io/brand-guide/" target="_blank">
+        <div class="resource-icon">🎨</div>
+        <div class="resource-text">
+          <div class="resource-label">Brand Guide</div>
+          <div class="resource-sub">Colors, typography, logos, and usage rules</div>
+        </div>
+        <span class="resource-arrow">→</span>
+      </a>
+    </div>
+
     <!-- Activity Log -->
     <div class="sl">Recent Activity</div>
 
@@ -926,7 +1006,7 @@ body {
 // ═══════════════════════════════════════════════════════════════
 const CONFIG = {
   TEAM_PASSWORD: 'frontrow!marketing2026',
-  WORKER_URL:    'https://frontrowmd-launcher.alex-5b6.workers.dev',
+  WORKER_URL:    'https://YOUR-WORKER-URL.workers.dev',
 };
 
 // ═══════════════════════════════════════════════════════════════
