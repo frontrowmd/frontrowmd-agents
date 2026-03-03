@@ -126,6 +126,16 @@ body {
   gap: 10px;
   margin-bottom: 48px;
 }
+.pw-logo-img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+.pw-logo-fallback {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .pw-logo-area .caduceus-icon {
   font-size: 26px;
   color: var(--soft-teal);
@@ -331,6 +341,20 @@ body {
 }
 .header-logo strong { font-weight: 700; color: var(--white); }
 .header-logo .caduceus-icon { font-size: 22px; color: var(--soft-teal); }
+.header-logo-img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+.header-logo-fallback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  color: rgba(255,255,255,0.8);
+}
+.header-logo-fallback strong { font-weight: 700; color: var(--white); }
+.header-logo-fallback .caduceus-icon { font-size: 22px; color: var(--soft-teal); }
 
 .header-divider {
   width: 1px;
@@ -881,8 +905,12 @@ body {
   <div class="pw-watermark">☤</div>
   <div class="pw-content">
     <div class="pw-logo-area">
-      <span class="caduceus-icon">☤</span>
-      <span class="pw-logo-text">frontrow<strong>MD</strong></span>
+      <img src="FrontrowMD_White_Logo.png" alt="frontrowMD" class="pw-logo-img"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="pw-logo-fallback" style="display:none">
+        <span class="caduceus-icon">☤</span>
+        <span class="pw-logo-text">frontrow<strong>MD</strong></span>
+      </div>
     </div>
 
     <div class="pw-card">
@@ -914,8 +942,12 @@ body {
   <div class="app-header">
     <div class="header-left">
       <div class="header-logo">
-        <span class="caduceus-icon">☤</span>
-        frontrow<strong>MD</strong>
+        <img src="FrontrowMD_White_Logo.png" alt="frontrowMD" class="header-logo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="header-logo-fallback" style="display:none">
+          <span class="caduceus-icon">☤</span>
+          frontrow<strong>MD</strong>
+        </div>
       </div>
       <div class="header-divider"></div>
       <div class="header-title">Agents Center</div>
@@ -1083,11 +1115,11 @@ body {
      ═══════════════════════════════════════════════════════════ -->
 <script>
 // ── CONFIGURATION ────────────────────────────────────────────
-// Update these 3 values for your deployment
+// Update these values for your deployment
 const CONFIG = {
-  TEAM_PASSWORD: 'frontrow2025',
-  GITHUB_TOKEN:  'YOUR_GITHUB_PAT_HERE',
-  GITHUB_OWNER:  'YOUR_GITHUB_USERNAME'
+  TEAM_PASSWORD: 'frontrow!marketing2026',
+  WORKER_URL:    'https://frontrowmd-launcher.alex-5b6.workers.dev/',  // Your Cloudflare Worker URL
+  GITHUB_OWNER:  'frontrowmd'                   // For quick-links only (no token needed)
 };
 
 // ── PASSWORD GATE ────────────────────────────────────────────
@@ -1194,7 +1226,7 @@ async function triggerAgent6() {
 
   addActivity('Reporting Dashboard', 'run', 'Dispatching workflow…');
 
-  // Build inputs
+  // Build inputs for the worker
   let inputs = {};
   if (preset === 'custom') {
     const from = document.getElementById('custom-from').value;
@@ -1211,26 +1243,24 @@ async function triggerAgent6() {
   }
 
   try {
-    const resp = await fetch(
-      `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/frontrowmd-reporting-dashboard/actions/workflows/reporting-dashboard.yml/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ref: 'main', inputs })
-      }
-    );
+    const resp = await fetch(CONFIG.WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        password: CONFIG.TEAM_PASSWORD,
+        agent: 'agent6',
+        inputs
+      })
+    });
 
-    if (resp.status === 204 || resp.ok) {
+    const data = await resp.json().catch(() => ({}));
+
+    if (resp.ok && data.ok) {
       status.className = 'agent-status success';
       status.textContent = '✓ Workflow dispatched. Report will arrive via Slack and email shortly.';
       addActivity('Reporting Dashboard', 'ok', `Dispatched (${preset})`);
     } else {
-      const err = await resp.text();
-      throw new Error(`HTTP ${resp.status}: ${err}`);
+      throw new Error(data.error || data.detail || `HTTP ${resp.status}`);
     }
   } catch (e) {
     status.className = 'agent-status error';
@@ -1256,26 +1286,23 @@ async function triggerAgent4() {
   addActivity('LinkedIn Optimizer', 'run', 'Dispatching workflow…');
 
   try {
-    const resp = await fetch(
-      `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/frontrowmd-linkedin-optimizer/actions/workflows/linkedin-optimizer.yml/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ref: 'main' })
-      }
-    );
+    const resp = await fetch(CONFIG.WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        password: CONFIG.TEAM_PASSWORD,
+        agent: 'agent4'
+      })
+    });
 
-    if (resp.status === 204 || resp.ok) {
+    const data = await resp.json().catch(() => ({}));
+
+    if (resp.ok && data.ok) {
       status.className = 'agent-status success';
       status.textContent = '✓ Workflow dispatched. Report will arrive via Slack and email shortly.';
       addActivity('LinkedIn Optimizer', 'ok', 'Dispatched successfully');
     } else {
-      const err = await resp.text();
-      throw new Error(`HTTP ${resp.status}: ${err}`);
+      throw new Error(data.error || data.detail || `HTTP ${resp.status}`);
     }
   } catch (e) {
     status.className = 'agent-status error';
