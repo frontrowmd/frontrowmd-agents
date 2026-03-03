@@ -542,14 +542,6 @@ body {
   flex: 1;
   min-width: 0;
 }
-.agent-number {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--soft-teal);
-  margin-bottom: 4px;
-}
 .agent-title {
   font-size: 18px;
   font-weight: 700;
@@ -745,71 +737,6 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   QUICK LINKS SECTION
-   ═══════════════════════════════════════════════════════════ */
-.quick-links {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 48px;
-}
-
-.quick-link {
-  background: var(--white);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 20px 22px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  text-decoration: none;
-  color: var(--deep-navy);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
-}
-.quick-link:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hov);
-  border-color: var(--soft-teal);
-}
-.quick-link-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: var(--card-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-.quick-link-text {
-  flex: 1;
-  min-width: 0;
-}
-.quick-link-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--deep-navy);
-  line-height: 1.3;
-}
-.quick-link-sub {
-  font-size: 11px;
-  color: var(--soft-teal);
-  margin-top: 2px;
-}
-.quick-link-arrow {
-  font-size: 16px;
-  color: var(--soft-teal);
-  opacity: 0.5;
-  transition: all 0.2s;
-}
-.quick-link:hover .quick-link-arrow {
-  opacity: 1;
-  transform: translateX(2px);
-}
-
-/* ═══════════════════════════════════════════════════════════
    ACTIVITY LOG
    ═══════════════════════════════════════════════════════════ */
 .activity-card {
@@ -884,7 +811,6 @@ body {
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 900px) {
   .agents-grid { grid-template-columns: 1fr; }
-  .quick-links { grid-template-columns: 1fr; }
 }
 @media (max-width: 700px) {
   .app-header { padding: 18px 20px; }
@@ -969,128 +895,9 @@ body {
       <p>Trigger automated reports and analyses on demand. Results are delivered to Slack and email within 60 seconds.</p>
     </div>
 
-    <!-- Agent Cards -->
+    <!-- Agent Cards (rendered dynamically) -->
     <div class="sl">Available Agents</div>
-
-    <div class="agents-grid">
-
-      <!-- Agent 6: Reporting Dashboard -->
-      <div class="agent-card">
-        <div class="agent-card-inner">
-          <div class="agent-card-head">
-            <div class="agent-icon-wrap">📊</div>
-            <div class="agent-meta">
-              <div class="agent-number">Agent 6</div>
-              <div class="agent-title">Reporting Dashboard</div>
-            </div>
-          </div>
-
-          <p class="agent-desc">
-            Full cross-channel performance report covering ad spend, demos, CPD, pipeline, MRR, and GA4 funnel metrics across all time windows.
-          </p>
-
-          <div class="agent-sources">
-            <span class="source-pill">Windsor.ai</span>
-            <span class="source-pill">HubSpot CRM</span>
-            <span class="source-pill">GA4</span>
-          </div>
-
-          <div class="agent-trigger">
-            <div class="trigger-label">Run Report</div>
-
-            <div class="trigger-select-row">
-              <select id="report-preset" class="trigger-select" onchange="handlePresetChange()">
-                <option value="full">Full Report (all windows)</option>
-                <option value="yesterday">Yesterday only</option>
-                <option value="last7">Last 7 Days only</option>
-                <option value="mtd">Month to Date only</option>
-                <option value="lastmonth">Last Month only</option>
-                <option value="ytd">Year to Date only</option>
-                <option value="custom">Custom Date Range</option>
-              </select>
-            </div>
-
-            <div id="custom-dates" style="display:none">
-              <div class="date-row">
-                <input type="date" id="custom-from" class="date-input">
-                <span class="date-sep">→</span>
-                <input type="date" id="custom-to" class="date-input">
-              </div>
-            </div>
-
-            <button class="trigger-btn" id="btn-agent6" onclick="triggerAgent6()">
-              Run Reporting Dashboard →
-            </button>
-
-            <div class="agent-status" id="status-agent6"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Agent 4: LinkedIn Optimizer -->
-      <div class="agent-card">
-        <div class="agent-card-inner">
-          <div class="agent-card-head">
-            <div class="agent-icon-wrap" style="background:linear-gradient(135deg,#0A66C2,#004182)">💼</div>
-            <div class="agent-meta">
-              <div class="agent-number">Agent 4</div>
-              <div class="agent-title">LinkedIn Optimizer</div>
-            </div>
-          </div>
-
-          <p class="agent-desc">
-            Analyzes LinkedIn campaign performance, identifies cost optimization opportunities, and generates actionable recommendations to reduce CPD.
-          </p>
-
-          <div class="agent-sources">
-            <span class="source-pill">Windsor.ai</span>
-            <span class="source-pill">HubSpot CRM</span>
-            <span class="source-pill">LinkedIn Ads</span>
-          </div>
-
-          <div class="agent-trigger">
-            <div class="trigger-label">Run Analysis</div>
-
-            <button class="trigger-btn" id="btn-agent4" onclick="triggerAgent4()">
-              Run LinkedIn Optimizer →
-            </button>
-
-            <div class="agent-status" id="status-agent4"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Quick Links -->
-    <div class="sl">Quick Links</div>
-
-    <div class="quick-links">
-      <a class="quick-link" id="link-dashboard" href="#" target="_blank">
-        <div class="quick-link-icon">📈</div>
-        <div class="quick-link-text">
-          <div class="quick-link-label">Live Dashboard</div>
-          <div class="quick-link-sub">View latest report</div>
-        </div>
-        <span class="quick-link-arrow">→</span>
-      </a>
-      <a class="quick-link" id="link-linkedin" href="#" target="_blank">
-        <div class="quick-link-icon">📋</div>
-        <div class="quick-link-text">
-          <div class="quick-link-label">LinkedIn Report</div>
-          <div class="quick-link-sub">View latest analysis</div>
-        </div>
-        <span class="quick-link-arrow">→</span>
-      </a>
-      <a class="quick-link" href="https://github.com" target="_blank" id="link-github">
-        <div class="quick-link-icon">⚙️</div>
-        <div class="quick-link-text">
-          <div class="quick-link-label">GitHub Actions</div>
-          <div class="quick-link-sub">View workflow runs</div>
-        </div>
-        <span class="quick-link-arrow">→</span>
-      </a>
-    </div>
+    <div class="agents-grid" id="agents-grid"></div>
 
     <!-- Activity Log -->
     <div class="sl">Recent Activity</div>
@@ -1114,15 +921,70 @@ body {
      SCRIPTS
      ═══════════════════════════════════════════════════════════ -->
 <script>
-// ── CONFIGURATION ────────────────────────────────────────────
-// Update these values for your deployment
+// ═══════════════════════════════════════════════════════════════
+// CONFIGURATION — Edit these values for your deployment
+// ═══════════════════════════════════════════════════════════════
 const CONFIG = {
   TEAM_PASSWORD: 'frontrow!marketing2026',
-  WORKER_URL:    'https://frontrowmd-launcher.alex-5b6.workers.dev/',  // Your Cloudflare Worker URL
-  GITHUB_OWNER:  'frontrowmd'                   // For quick-links only (no token needed)
+  WORKER_URL:    'https://frontrowmd-launcher.alex-5b6.workers.dev',
 };
 
-// ── PASSWORD GATE ────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// AGENTS — Add, remove, or reorder agents here.
+//
+// Each agent needs a matching entry in your Cloudflare Worker's
+// AGENT_CONFIG object. The `id` here must match the key there.
+//
+//   id          – unique key (must match worker AGENT_CONFIG)
+//   title       – display name on the card
+//   icon        – emoji for the card icon
+//   iconBg      – CSS gradient for icon (null = default navy)
+//   desc        – short description
+//   sources     – array of data source pill labels
+//   triggerLabel– label above the button (e.g. "Run Report")
+//   btnLabel    – text on the trigger button
+//   hasPresets  – true = show report preset dropdown + custom dates
+//   presets     – array of { value, label } for the dropdown
+// ═══════════════════════════════════════════════════════════════
+const AGENTS = [
+  {
+    id:           'agent6',
+    title:        'Marketing Performance Dashboard',
+    icon:         '📊',
+    iconBg:       null,
+    desc:         'Full cross-channel performance report covering ad spend, demos, CPD, pipeline, MRR, and GA4 funnel metrics across all time windows.',
+    sources:      ['Windsor.ai', 'HubSpot CRM', 'GA4'],
+    triggerLabel: 'Run Report',
+    btnLabel:     'Run Performance Dashboard',
+    hasPresets:   true,
+    presets: [
+      { value: 'full',      label: 'Full Report (all windows)' },
+      { value: 'yesterday', label: 'Yesterday only' },
+      { value: 'last7',     label: 'Last 7 Days only' },
+      { value: 'mtd',       label: 'Month to Date only' },
+      { value: 'lastmonth', label: 'Last Month only' },
+      { value: 'ytd',       label: 'Year to Date only' },
+      { value: 'custom',    label: 'Custom Date Range' },
+    ],
+  },
+  {
+    id:           'agent4',
+    title:        'LinkedIn Optimizer',
+    icon:         '💼',
+    iconBg:       'linear-gradient(135deg,#0A66C2,#004182)',
+    desc:         'Analyzes LinkedIn campaign performance, identifies cost optimization opportunities, and generates actionable recommendations to reduce CPD.',
+    sources:      ['Windsor.ai', 'HubSpot CRM', 'LinkedIn Ads'],
+    triggerLabel: 'Run Analysis',
+    btnLabel:     'Run LinkedIn Optimizer',
+    hasPresets:   false,
+    presets:      [],
+  },
+];
+
+
+// ═══════════════════════════════════════════════════════════════
+// PASSWORD GATE
+// ═══════════════════════════════════════════════════════════════
 function hashStr(s) {
   let h = 0;
   for (let i = 0; i < s.length; i++) {
@@ -1145,9 +1007,7 @@ function checkPw() {
     input.classList.add('pw-error');
     err.textContent = 'Incorrect password. Please try again.';
     input.focus();
-    setTimeout(() => {
-      input.classList.remove('pw-error');
-    }, 2000);
+    setTimeout(() => input.classList.remove('pw-error'), 2000);
   }
 }
 
@@ -1172,27 +1032,21 @@ if (sessionStorage.getItem('agents_auth') === '1') {
   document.getElementById('main-content').style.display = 'block';
 }
 
-// Set quick-links
-document.getElementById('link-dashboard').href =
-  `https://${CONFIG.GITHUB_OWNER}.github.io/frontrowmd-reporting-dashboard/`;
-document.getElementById('link-linkedin').href =
-  `https://${CONFIG.GITHUB_OWNER}.github.io/frontrowmd-linkedin-optimizer/`;
-document.getElementById('link-github').href =
-  `https://github.com/${CONFIG.GITHUB_OWNER}`;
 
-// ── ACTIVITY LOG ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// ACTIVITY LOG
+// ═══════════════════════════════════════════════════════════════
 const activityLog = [];
 
 function addActivity(name, status, detail) {
-  const now = new Date();
-  const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   activityLog.unshift({ name, status, detail, time });
   renderActivity();
 }
 
 function renderActivity() {
   const el = document.getElementById('activity-log');
-  if (activityLog.length === 0) {
+  if (!activityLog.length) {
     el.innerHTML = '<div class="activity-empty">No activity yet this session. Trigger an agent to get started.</div>';
     return;
   }
@@ -1205,52 +1059,116 @@ function renderActivity() {
   `).join('');
 }
 
-// ── PRESET / CUSTOM DATE HANDLING ────────────────────────────
-function handlePresetChange() {
-  const val = document.getElementById('report-preset').value;
-  document.getElementById('custom-dates').style.display = val === 'custom' ? 'block' : 'none';
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER AGENT CARDS (data-driven)
+// ═══════════════════════════════════════════════════════════════
+function renderAgents() {
+  const grid = document.getElementById('agents-grid');
+  grid.innerHTML = AGENTS.map(agent => {
+    const iconStyle = agent.iconBg ? ` style="background:${agent.iconBg}"` : '';
+    const sourcePills = agent.sources.map(s => `<span class="source-pill">${s}</span>`).join('');
+
+    // Preset dropdown (only if hasPresets)
+    let presetHTML = '';
+    if (agent.hasPresets && agent.presets.length) {
+      const options = agent.presets.map(p => `<option value="${p.value}">${p.label}</option>`).join('');
+      presetHTML = `
+        <div class="trigger-select-row">
+          <select id="preset-${agent.id}" class="trigger-select" onchange="handlePresetChange('${agent.id}')">
+            ${options}
+          </select>
+        </div>
+        <div id="custom-dates-${agent.id}" style="display:none">
+          <div class="date-row">
+            <input type="date" id="custom-from-${agent.id}" class="date-input">
+            <span class="date-sep">→</span>
+            <input type="date" id="custom-to-${agent.id}" class="date-input">
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div class="agent-card">
+        <div class="agent-card-inner">
+          <div class="agent-card-head">
+            <div class="agent-icon-wrap"${iconStyle}>${agent.icon}</div>
+            <div class="agent-meta">
+              <div class="agent-title">${agent.title}</div>
+            </div>
+          </div>
+          <p class="agent-desc">${agent.desc}</p>
+          <div class="agent-sources">${sourcePills}</div>
+          <div class="agent-trigger">
+            <div class="trigger-label">${agent.triggerLabel}</div>
+            ${presetHTML}
+            <button class="trigger-btn" id="btn-${agent.id}" onclick="triggerAgent('${agent.id}')">
+              ${agent.btnLabel} →
+            </button>
+            <div class="agent-status" id="status-${agent.id}"></div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
-// ── TRIGGER AGENT 6 ──────────────────────────────────────────
-async function triggerAgent6() {
-  const btn    = document.getElementById('btn-agent6');
-  const status = document.getElementById('status-agent6');
-  const preset = document.getElementById('report-preset').value;
+renderAgents();
 
+
+// ═══════════════════════════════════════════════════════════════
+// PRESET / CUSTOM DATE HANDLING
+// ═══════════════════════════════════════════════════════════════
+function handlePresetChange(agentId) {
+  const val = document.getElementById(`preset-${agentId}`).value;
+  const el  = document.getElementById(`custom-dates-${agentId}`);
+  if (el) el.style.display = val === 'custom' ? 'block' : 'none';
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// UNIVERSAL TRIGGER (works for any agent in the AGENTS array)
+// ═══════════════════════════════════════════════════════════════
+async function triggerAgent(agentId) {
+  const agent  = AGENTS.find(a => a.id === agentId);
+  if (!agent) return;
+
+  const btn    = document.getElementById(`btn-${agentId}`);
+  const status = document.getElementById(`status-${agentId}`);
+
+  // UI → loading state
   btn.disabled  = true;
   btn.classList.add('running');
   btn.innerHTML = '<span style="animation:pulse 1s infinite">⏳</span> Dispatching…';
   status.className = 'agent-status pending';
   status.style.display = 'flex';
   status.textContent = '⏳ Sending dispatch to GitHub Actions…';
+  addActivity(agent.title, 'run', 'Dispatching workflow…');
 
-  addActivity('Reporting Dashboard', 'run', 'Dispatching workflow…');
-
-  // Build inputs for the worker
+  // Build inputs from preset dropdown (if this agent has one)
   let inputs = {};
-  if (preset === 'custom') {
-    const from = document.getElementById('custom-from').value;
-    const to   = document.getElementById('custom-to').value;
-    if (!from || !to) {
-      status.className = 'agent-status error';
-      status.textContent = '⚠ Please select both start and end dates.';
-      resetBtn(btn, 'Run Reporting Dashboard →');
-      return;
+  if (agent.hasPresets) {
+    const preset = document.getElementById(`preset-${agentId}`).value;
+    if (preset === 'custom') {
+      const from = document.getElementById(`custom-from-${agentId}`).value;
+      const to   = document.getElementById(`custom-to-${agentId}`).value;
+      if (!from || !to) {
+        status.className = 'agent-status error';
+        status.textContent = '⚠ Please select both start and end dates.';
+        resetBtn(btn, `${agent.btnLabel} →`);
+        return;
+      }
+      inputs = { custom_from: from, custom_to: to };
+    } else if (preset !== 'full') {
+      inputs = { window: preset };
     }
-    inputs = { custom_from: from, custom_to: to };
-  } else if (preset !== 'full') {
-    inputs = { window: preset };
   }
 
+  // Call Cloudflare Worker
   try {
     const resp = await fetch(CONFIG.WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        password: CONFIG.TEAM_PASSWORD,
-        agent: 'agent6',
-        inputs
-      })
+      body: JSON.stringify({ password: CONFIG.TEAM_PASSWORD, agent: agentId, inputs })
     });
 
     const data = await resp.json().catch(() => ({}));
@@ -1258,59 +1176,20 @@ async function triggerAgent6() {
     if (resp.ok && data.ok) {
       status.className = 'agent-status success';
       status.textContent = '✓ Workflow dispatched. Report will arrive via Slack and email shortly.';
-      addActivity('Reporting Dashboard', 'ok', `Dispatched (${preset})`);
+      const presetLabel = agent.hasPresets
+        ? ` (${document.getElementById(`preset-${agentId}`).value})`
+        : '';
+      addActivity(agent.title, 'ok', `Dispatched${presetLabel}`);
     } else {
       throw new Error(data.error || data.detail || `HTTP ${resp.status}`);
     }
   } catch (e) {
     status.className = 'agent-status error';
     status.textContent = `✕ Failed: ${e.message}`;
-    addActivity('Reporting Dashboard', 'fail', e.message);
+    addActivity(agent.title, 'fail', e.message);
   }
 
-  resetBtn(btn, 'Run Reporting Dashboard →');
-}
-
-// ── TRIGGER AGENT 4 ──────────────────────────────────────────
-async function triggerAgent4() {
-  const btn    = document.getElementById('btn-agent4');
-  const status = document.getElementById('status-agent4');
-
-  btn.disabled  = true;
-  btn.classList.add('running');
-  btn.innerHTML = '<span style="animation:pulse 1s infinite">⏳</span> Dispatching…';
-  status.className = 'agent-status pending';
-  status.style.display = 'flex';
-  status.textContent = '⏳ Sending dispatch to GitHub Actions…';
-
-  addActivity('LinkedIn Optimizer', 'run', 'Dispatching workflow…');
-
-  try {
-    const resp = await fetch(CONFIG.WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        password: CONFIG.TEAM_PASSWORD,
-        agent: 'agent4'
-      })
-    });
-
-    const data = await resp.json().catch(() => ({}));
-
-    if (resp.ok && data.ok) {
-      status.className = 'agent-status success';
-      status.textContent = '✓ Workflow dispatched. Report will arrive via Slack and email shortly.';
-      addActivity('LinkedIn Optimizer', 'ok', 'Dispatched successfully');
-    } else {
-      throw new Error(data.error || data.detail || `HTTP ${resp.status}`);
-    }
-  } catch (e) {
-    status.className = 'agent-status error';
-    status.textContent = `✕ Failed: ${e.message}`;
-    addActivity('LinkedIn Optimizer', 'fail', e.message);
-  }
-
-  resetBtn(btn, 'Run LinkedIn Optimizer →');
+  resetBtn(btn, `${agent.btnLabel} →`);
 }
 
 function resetBtn(btn, label) {
