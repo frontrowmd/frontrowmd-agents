@@ -466,7 +466,7 @@ body {
    ═══════════════════════════════════════════════════════════ */
 .agents-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
   gap: 20px;
   margin-bottom: 48px;
 }
@@ -557,21 +557,52 @@ body {
   flex: 1;
 }
 
-/* Data sources pills */
-.agent-sources {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+/* Latest report link */
+.latest-report {
+  border-top: 1px solid var(--card-border);
+  padding: 16px 28px;
+  min-height: 24px;
 }
-.source-pill {
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  padding: 4px 12px;
-  border-radius: var(--pill);
-  border: 1px solid var(--card-border);
-  color: var(--mid-navy);
+.latest-loading {
+  font-size: 11px;
+  color: var(--soft-teal);
+  font-style: italic;
+  opacity: 0.6;
+}
+.latest-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 10px;
   background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  transition: all 0.2s ease;
+}
+.latest-link:hover {
+  border-color: var(--soft-teal);
+  background: var(--teal-10);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.latest-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.latest-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.latest-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--deep-navy);
+}
+.latest-time {
+  font-size: 11px;
+  color: var(--soft-teal);
 }
 
 /* Trigger section */
@@ -1006,7 +1037,7 @@ body {
 // ═══════════════════════════════════════════════════════════════
 const CONFIG = {
   TEAM_PASSWORD: 'frontrow!marketing2026',
-  WORKER_URL:    'https://frontrowmd-launcher.alex-5b6.workers.dev/',
+  WORKER_URL:    'https://YOUR-WORKER-URL.workers.dev',
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -1015,28 +1046,27 @@ const CONFIG = {
 // Each agent needs a matching entry in your Cloudflare Worker's
 // AGENT_CONFIG object. The `id` here must match the key there.
 //
-//   id          – unique key (must match worker AGENT_CONFIG)
-//   title       – display name on the card
-//   icon        – emoji for the card icon
-//   iconBg      – CSS gradient for icon (null = default navy)
-//   desc        – short description
-//   sources     – array of data source pill labels
-//   triggerLabel– label above the button (e.g. "Run Report")
-//   btnLabel    – text on the trigger button
-//   hasPresets  – true = show report preset dropdown + custom dates
-//   presets     – array of { value, label } for the dropdown
+//   id            – unique key (must match worker AGENT_CONFIG)
+//   title         – display name on the card
+//   icon          – emoji for the card icon
+//   iconBg        – CSS gradient for icon (null = default navy)
+//   desc          – short description
+//   triggerLabel  – label above the button (e.g. "Run Report")
+//   btnLabel      – text on the trigger button
+//   hasPresets    – true = show report preset dropdown + custom dates
+//   presets       – array of { value, label } for the dropdown
+//   dashboardRepo – GitHub repo name for "View Latest" link (null = none)
 // ═══════════════════════════════════════════════════════════════
 const AGENTS = [
   {
-    id:           'agent6',
-    title:        'Marketing Performance Dashboard',
-    icon:         '📊',
-    iconBg:       null,
-    desc:         'Full cross-channel performance report covering ad spend, demos, CPD, pipeline, MRR, and GA4 funnel metrics across all time windows.',
-    sources:      ['Windsor.ai', 'HubSpot CRM', 'GA4'],
-    triggerLabel: 'Run Report',
-    btnLabel:     'Run Performance Dashboard',
-    hasPresets:   true,
+    id:             'agent6',
+    title:          'Marketing Performance Dashboard',
+    icon:           '📊',
+    iconBg:         null,
+    desc:           'Full cross-channel performance report covering ad spend, demos, CPD, pipeline, MRR, and GA4 funnel metrics across all time windows.',
+    triggerLabel:   'Run Report',
+    btnLabel:       'Run Performance Dashboard',
+    hasPresets:     true,
     presets: [
       { value: 'full',      label: 'Full Report (all windows)' },
       { value: 'yesterday', label: 'Yesterday only' },
@@ -1046,18 +1076,7 @@ const AGENTS = [
       { value: 'ytd',       label: 'Year to Date only' },
       { value: 'custom',    label: 'Custom Date Range' },
     ],
-  },
-  {
-    id:           'agent4',
-    title:        'LinkedIn Optimizer',
-    icon:         '💼',
-    iconBg:       'linear-gradient(135deg,#0A66C2,#004182)',
-    desc:         'Analyzes LinkedIn campaign performance, identifies cost optimization opportunities, and generates actionable recommendations to reduce CPD.',
-    sources:      ['Windsor.ai', 'HubSpot CRM', 'LinkedIn Ads'],
-    triggerLabel: 'Run Analysis',
-    btnLabel:     'Run LinkedIn Optimizer',
-    hasPresets:   false,
-    presets:      [],
+    dashboardRepo:  'frontrowmd-reporting-dashboard',
   },
 ];
 
@@ -1147,7 +1166,6 @@ function renderAgents() {
   const grid = document.getElementById('agents-grid');
   grid.innerHTML = AGENTS.map(agent => {
     const iconStyle = agent.iconBg ? ` style="background:${agent.iconBg}"` : '';
-    const sourcePills = agent.sources.map(s => `<span class="source-pill">${s}</span>`).join('');
 
     // Preset dropdown (only if hasPresets)
     let presetHTML = '';
@@ -1168,6 +1186,13 @@ function renderAgents() {
         </div>`;
     }
 
+    // Latest report link placeholder (populated async)
+    const latestHTML = agent.dashboardRepo
+      ? `<div class="latest-report" id="latest-${agent.id}">
+           <span class="latest-loading">Loading latest report…</span>
+         </div>`
+      : '';
+
     return `
       <div class="agent-card">
         <div class="agent-card-inner">
@@ -1178,7 +1203,6 @@ function renderAgents() {
             </div>
           </div>
           <p class="agent-desc">${agent.desc}</p>
-          <div class="agent-sources">${sourcePills}</div>
           <div class="agent-trigger">
             <div class="trigger-label">${agent.triggerLabel}</div>
             ${presetHTML}
@@ -1187,12 +1211,54 @@ function renderAgents() {
             </button>
             <div class="agent-status" id="status-${agent.id}"></div>
           </div>
+          ${latestHTML}
         </div>
       </div>`;
   }).join('');
 }
 
 renderAgents();
+
+// Fetch latest report info for agents that have dashboardRepo
+AGENTS.forEach(agent => {
+  if (agent.dashboardRepo) fetchLatestReport(agent);
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// FETCH LATEST REPORT (calls Cloudflare Worker /latest endpoint)
+// ═══════════════════════════════════════════════════════════════
+async function fetchLatestReport(agent) {
+  const el = document.getElementById(`latest-${agent.id}`);
+  if (!el) return;
+
+  try {
+    const resp = await fetch(`${CONFIG.WORKER_URL}/latest?repo=${encodeURIComponent(agent.dashboardRepo)}`);
+    const data = await resp.json();
+
+    if (resp.ok && data.ok) {
+      const date = new Date(data.lastUpdated);
+      const timeStr = date.toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true,
+        timeZone: 'America/Los_Angeles'
+      });
+      el.innerHTML = `
+        <a class="latest-link" href="${data.url}" target="_blank">
+          <span class="latest-icon">📈</span>
+          <span class="latest-text">
+            <span class="latest-label">View Latest Report →</span>
+            <span class="latest-time">Last run: ${timeStr}</span>
+          </span>
+        </a>`;
+    } else {
+      el.innerHTML = '';
+    }
+  } catch (e) {
+    // Silently hide if worker isn't reachable
+    el.innerHTML = '';
+  }
+}
 
 
 // ═══════════════════════════════════════════════════════════════
