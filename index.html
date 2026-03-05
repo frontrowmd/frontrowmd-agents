@@ -989,7 +989,7 @@ body {
 // ═══════════════════════════════════════════════════════════════
 const CONFIG = {
   TEAM_PASSWORD: 'frontrow!marketing2026',
-  WORKER_URL:    'https://frontrowmd-launcher.alex-5b6.workers.dev/',
+  WORKER_URL:    'https://YOUR-WORKER-URL.workers.dev',
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -1222,7 +1222,7 @@ async function triggerAgent(agentId) {
 
     if (resp.ok && data.ok) {
       status.className = 'agent-status success';
-      status.textContent = '✓ Workflow dispatched. Report will arrive via Slack and email shortly.';
+      status.textContent = '✓ Workflow dispatched. Report will arrive via Slack shortly.';
       const presetLabel = agent.hasPresets
         ? ` (${document.getElementById(`preset-${agentId}`).value})`
         : '';
