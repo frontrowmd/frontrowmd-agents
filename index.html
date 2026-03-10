@@ -555,6 +555,24 @@ body {
   line-height: 1.25;
 }
 
+.agent-schedule {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--soft-teal);
+  margin-top: 6px;
+  letter-spacing: 0.01em;
+}
+.schedule-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2ecc71;
+  box-shadow: 0 0 5px rgba(46,204,113,0.35);
+  flex-shrink: 0;
+}
+
 .agent-desc {
   font-size: 14px;
   color: var(--mid-navy);
@@ -570,14 +588,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.trigger-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--soft-teal);
 }
 
 .trigger-btn {
@@ -612,84 +622,6 @@ body {
 .trigger-btn.running {
   background: linear-gradient(135deg, var(--mid-navy), var(--deep-navy));
   cursor: wait;
-}
-
-/* Dropdown select for custom reports */
-.trigger-select-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.trigger-select {
-  font-family: var(--font-body);
-  font-size: 13px;
-  padding: 10px 16px;
-  border-radius: var(--pill);
-  border: 1.5px solid var(--card-border);
-  background: var(--white);
-  color: var(--deep-navy);
-  outline: none;
-  flex: 1;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2372A4BF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  padding-right: 38px;
-}
-.trigger-select:focus {
-  border-color: var(--soft-teal);
-}
-
-.trigger-btn-sm {
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 700;
-  padding: 10px 20px;
-  border-radius: var(--pill);
-  border: none;
-  background: var(--deep-navy);
-  color: var(--white);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-.trigger-btn-sm:hover {
-  background: var(--midnight);
-  transform: translateY(-1px);
-}
-.trigger-btn-sm:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Custom date inputs */
-.date-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.date-input {
-  font-family: var(--font-body);
-  font-size: 12px;
-  padding: 8px 14px;
-  border-radius: var(--pill);
-  border: 1.5px solid var(--card-border);
-  background: var(--white);
-  color: var(--deep-navy);
-  outline: none;
-  flex: 1;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-.date-input:focus { border-color: var(--soft-teal); }
-.date-sep {
-  font-size: 12px;
-  color: var(--soft-teal);
-  font-weight: 700;
 }
 
 /* Status toast */
@@ -995,7 +927,7 @@ body {
 // ═══════════════════════════════════════════════════════════════
 const CONFIG = {
   TEAM_PASSWORD: 'frontrow!marketing2026',
-  WORKER_URL:    'https://frontrowmd-launcher.alex-5b6.workers.dev/',
+  WORKER_URL:    'https://YOUR-WORKER-URL.workers.dev',
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -1011,8 +943,7 @@ const CONFIG = {
 //   desc          – short description
 //   triggerLabel  – label above the button (e.g. "Run Report")
 //   btnLabel      – text on the trigger button
-//   hasPresets    – true = show report preset dropdown + custom dates
-//   presets       – array of { value, label } for the dropdown
+//   schedule      – subtext showing auto-run time (null = none)
 // ═══════════════════════════════════════════════════════════════
 const AGENTS = [
   {
@@ -1021,18 +952,9 @@ const AGENTS = [
     icon:           '📊',
     iconBg:         null,
     desc:           'Full cross-channel performance report covering ad spend, demos, CPD, pipeline, MRR, and GA4 funnel metrics across all time windows.',
+    schedule:       'Runs daily at 8:30 AM PST · Delivers to Slack',
     triggerLabel:   'Run Report',
     btnLabel:       'Run Performance Dashboard',
-    hasPresets:     true,
-    presets: [
-      { value: 'full',      label: 'Full Report (all windows)' },
-      { value: 'yesterday', label: 'Yesterday only' },
-      { value: 'last7',     label: 'Last 7 Days only' },
-      { value: 'mtd',       label: 'Month to Date only' },
-      { value: 'lastmonth', label: 'Last Month only' },
-      { value: 'ytd',       label: 'Year to Date only' },
-      { value: 'custom',    label: 'Custom Date Range' },
-    ],
   },
   {
     id:             'channel-analyzer',
@@ -1040,10 +962,9 @@ const AGENTS = [
     icon:           '💰',
     iconBg:         null,
     desc:           'Deep analysis of all paid channels — cost per demo, cost per qualified demo, demo quality scoring, budget vs. actual spend pacing, campaign-level breakdowns, ad creative performance, and creative-to-demo quality attribution.',
+    schedule:       'Runs daily at 8:30 AM PST · Delivers to Slack',
     triggerLabel:   'Run Analysis',
     btnLabel:       'Run Channel Analyzer',
-    hasPresets:     false,
-    presets:        [],
   },
 ];
 
@@ -1133,25 +1054,9 @@ function renderAgents() {
   const grid = document.getElementById('agents-grid');
   grid.innerHTML = AGENTS.map(agent => {
     const iconStyle = agent.iconBg ? ` style="background:${agent.iconBg}"` : '';
-
-    // Preset dropdown (only if hasPresets)
-    let presetHTML = '';
-    if (agent.hasPresets && agent.presets.length) {
-      const options = agent.presets.map(p => `<option value="${p.value}">${p.label}</option>`).join('');
-      presetHTML = `
-        <div class="trigger-select-row">
-          <select id="preset-${agent.id}" class="trigger-select" onchange="handlePresetChange('${agent.id}')">
-            ${options}
-          </select>
-        </div>
-        <div id="custom-dates-${agent.id}" style="display:none">
-          <div class="date-row">
-            <input type="date" id="custom-from-${agent.id}" class="date-input">
-            <span class="date-sep">→</span>
-            <input type="date" id="custom-to-${agent.id}" class="date-input">
-          </div>
-        </div>`;
-    }
+    const scheduleHTML = agent.schedule
+      ? `<div class="agent-schedule"><span class="schedule-dot"></span>${agent.schedule}</div>`
+      : '';
 
     return `
       <div class="agent-card">
@@ -1160,12 +1065,11 @@ function renderAgents() {
             <div class="agent-icon-wrap"${iconStyle}>${agent.icon}</div>
             <div class="agent-meta">
               <div class="agent-title">${agent.title}</div>
+              ${scheduleHTML}
             </div>
           </div>
           <p class="agent-desc">${agent.desc}</p>
           <div class="agent-trigger">
-            <div class="trigger-label">${agent.triggerLabel}</div>
-            ${presetHTML}
             <button class="trigger-btn" id="btn-${agent.id}" onclick="triggerAgent('${agent.id}')">
               ${agent.btnLabel} →
             </button>
@@ -1177,16 +1081,6 @@ function renderAgents() {
 }
 
 renderAgents();
-
-
-// ═══════════════════════════════════════════════════════════════
-// PRESET / CUSTOM DATE HANDLING
-// ═══════════════════════════════════════════════════════════════
-function handlePresetChange(agentId) {
-  const val = document.getElementById(`preset-${agentId}`).value;
-  const el  = document.getElementById(`custom-dates-${agentId}`);
-  if (el) el.style.display = val === 'custom' ? 'block' : 'none';
-}
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -1208,31 +1102,12 @@ async function triggerAgent(agentId) {
   status.textContent = '⏳ Sending dispatch to GitHub Actions…';
   addActivity(agent.title, 'run', 'Dispatching workflow…');
 
-  // Build inputs from preset dropdown (if this agent has one)
-  let inputs = {};
-  if (agent.hasPresets) {
-    const preset = document.getElementById(`preset-${agentId}`).value;
-    if (preset === 'custom') {
-      const from = document.getElementById(`custom-from-${agentId}`).value;
-      const to   = document.getElementById(`custom-to-${agentId}`).value;
-      if (!from || !to) {
-        status.className = 'agent-status error';
-        status.textContent = '⚠ Please select both start and end dates.';
-        resetBtn(btn, `${agent.btnLabel} →`);
-        return;
-      }
-      inputs = { custom_from: from, custom_to: to };
-    } else if (preset !== 'full') {
-      inputs = { window: preset };
-    }
-  }
-
   // Call Cloudflare Worker
   try {
     const resp = await fetch(CONFIG.WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: CONFIG.TEAM_PASSWORD, agent: agentId, inputs })
+      body: JSON.stringify({ password: CONFIG.TEAM_PASSWORD, agent: agentId })
     });
 
     const data = await resp.json().catch(() => ({}));
@@ -1240,10 +1115,7 @@ async function triggerAgent(agentId) {
     if (resp.ok && data.ok) {
       status.className = 'agent-status success';
       status.textContent = '✓ Workflow dispatched. Report will arrive via Slack shortly.';
-      const presetLabel = agent.hasPresets
-        ? ` (${document.getElementById(`preset-${agentId}`).value})`
-        : '';
-      addActivity(agent.title, 'ok', `Dispatched${presetLabel}`);
+      addActivity(agent.title, 'ok', 'Dispatched successfully');
     } else {
       throw new Error(data.error || data.detail || `HTTP ${resp.status}`);
     }
